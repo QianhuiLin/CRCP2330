@@ -12,3 +12,21 @@
 // the screen should remain fully clear as long as no key is pressed.
 
 // Put your code here.
+
+(INIT)    
+// initialize the index which runs on the screen's pixel;
+
+     @8192  // 512 * 32 / 16;
+	 D=A
+	 @i     // i to 8192;
+	 M = D;
+
+(LOOP)
+@i;
+//still considering about how to do
+
+
+
+
+0;JMP
+
