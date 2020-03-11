@@ -11,3 +11,39 @@
 
 // for(int i - 1; i <= R0; i++){
 //    R2 = R1 + R2}
+@i 
+//memory lovation
+M=0   
+// let i = 0
+
+@result 
+// refers to another location
+M=0
+
+//LOOP
+(LOOP)
+        @i
+        D=M 
+        @R1
+        D=D-M 
+        @END
+        D;JEQ 
+
+
+        @result
+        D=M 
+        @R0
+        D=D+M
+        @result
+        M=D 
+        @i
+        M=M+1 
+        @LOOP
+        0;JMP    
+(END)
+        @result
+        D=M
+        @R2
+        M=D 
+        @END
+        0;JMP 
