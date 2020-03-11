@@ -7,3 +7,7 @@
 // (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)
 
 // Put your code here.
+
+
+// for(int i - 1; i <= R0; i++){
+//    R2 = R1 + R2}
