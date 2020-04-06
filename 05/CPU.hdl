@@ -42,8 +42,36 @@ CHIP CPU {
     // Put your code here:
 
 Not(in=instruction[15], out=instructionA);
-//Set A-register
-Or(a=instructionA, b=instruction[5], out=loadA);
+//A-register
+And(a=instruction[15], b=instruction[5], out=ALUtoA);
+Mux16(a=instruction, b=ALUout, sel=ALUtoA, out=AIn);
+
+Or(a=instructionA, b=ALUtoA, out=loadA);
+ARegister(in=AIn, load=loadA, out=Aout, out[0..14]=addressM);
+
+Mux16(a=AOut, b=inM, sel=instuction[12], out=ALUin);
+
+//D-register
+And(a=instruction[15], b=instruction[4],out=loadD);
+DRegister(in=ALUout, load=ALUout, out=DOut);
+
+//ALU
+
+ALU(
+
+
+
+
+
+
+
+
+
+
+)
+
+
+
 
 
 
