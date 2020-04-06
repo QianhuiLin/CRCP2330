@@ -40,62 +40,51 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
-// i  _   _  a c1 c2 c3 c4 c5 c6 d1 d2 d3 j1 j2 j3
-// 15 14 13 12 11 10 9  8  7  6  5  4  3  2  1  0
-Not(in=instruction[15], out=instructionA);
+    // i  _   _  a c1 c2 c3 c4 c5 c6 d1 d2 d3 j1 j2 j3
+    // 15 14 13 12 11 10 9  8  7  6  5  4  3  2  1  0
+    Not(in=instruction[15], out=instructionA);
 
+    //A-register
+    And(a=instruction[15], b=instruction[5], out=ALUtoA);
+    Mux16(a=instruction, b=ALUout, sel=ALUtoA, out=AIn);
 
-//A-register
+    Or(a=instructionA, b=ALUtoA, out=loadA);
+    ARegister(in=AIn, load=loadA, out=Aout, out[0..14]=addressM);
 
+    Mux16(a=Aout, b=inM, sel=instruction[12], out=ALUin);
 
+    //D-register
+    And(a=instruction[15], b=instruction[4],out=loadD);
+    DRegister(in=ALUout, load=loadD, out=DOut);
 
-And(a=instruction[15], b=instruction[5], out=ALUtoA);
-Mux16(a=instruction, b=ALUout, sel=ALUtoA, out=AIn);
+    //ALU
+    ALU(       
+    x=DOut,
+    y=ALUin,
+    zx=instruction[11],  //c1--c6
+    nx=instruction[10],
+    zy=instruction[9],
+    ny=instruction[8],
+    f=instruction[7],
+    no=instruction[6],
 
-Or(a=instructionA, b=ALUtoA, out=loadA);
-ARegister(in=AIn, load=loadA, out=Aout, out[0..14]=addressM);
+    out=ALUout,    //outputs
+    out=outM,
+    zr=zero,
+    ng=negative);
 
-Mux16(a=AOut, b=inM, sel=instruction[12], out=ALUin);
+    //Output
+    And(a=instruction[15], b=instruction[3], out=writeM);
 
-
-//D-register
-And(a=instruction[15], b=instruction[4],out=loadD);
-DRegister(in=ALUout, load=loadD, out=DOut);
-
-//ALU
-
-ALU(
-        
-x=DOut,
-y=ALUin,
-zx=instruction[11],  //c1--c6
-nx=instruction[10],
-zy=instruction[9],
-ny=instruction[8],
-f=instruction[7],
-no=instruction[6],
-
-
-out=ALUout,    //outputs
-out=outM,
-zr=zero,
-ng=negative);
-
-
-
-//Output
-And(a=instruction[15], b=instruction[3], out=writeM);
-
-
-And(a=zero, b=instruction[1], out=jeq);
-And(a=negative, b=instruction[2], out=jlt);
-Or(a=zero, b=negative, out=zn);
-Not(in=zn, out=positive);
-And(a=positive, b=instruction[0], out=jgt);
-Or(a=jeq, b=jlt, out=jle);
-Or(a=jle, b=jgt, out=jumpToA);
-And(a=instruction[15], b=jumpToA, out=PCload);
-Not(in=PCload, out=PCinc);
-PC(in=Aout, inc=PCinc, load=PCload, reset=reset, out[0..14]=pc);
+    And(a=zero, b=instruction[1], out=jeq);
+    And(a=negative, b=instruction[2], out=jlt);
+    Or(a=zero, b=negative, out=zn);
+    Not(in=zn, out=positive);
+    And(a=positive, b=instruction[0], out=jgt);
+    Or(a=jeq, b=jlt, out=jle);
+    Or(a=jle, b=jgt, out=jumpToA);
+    And(a=instruction[15], b=jumpToA, out=PCload);
+    Not(in=PCload, out=PCinc);
+    PC(in=Aout, inc=PCinc, load=PCload, reset=reset, out[0..14]=pc);
 
 }
